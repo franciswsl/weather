@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" >
+    <title>天气预报</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <style type="text/css">
+        #mufeng{
+            margin-top: 10px; 
+        }
+        body{
+            background-color: #59fcc5;
+            color: #707271;
+            font-size: 16px;
+        }
+        #pic{
+            margin-top: 60px;
+            height: 400px;
+        }
+        #pic img{
+            margin: 0 auto;
+            width: 600px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function(){
+            /*
+            * 1.输入城市名
+            * 2，点击的时候发送请求
+            * 3.响应成功渲染页面
+            * */
+
+            $('#search').on('click',function(){
+
+                var city = $('#city').val()||'北京';
+                $citycode=urlencode(city);
+                url='http://op.juhe.cn/onebox/weather/query?cityname='+$citycode+'&key=16188ffb1ab42fe0a3c7f68101fbd93b';
+                $.ajax({url: url,
+                    dataType: "jsonp",
+                    type:"get",
+                    data:{location:city},
+                    success:function(data){
+                        var rt = data.result.data.realtime;
+                        
+                        var weather = data.result.data.weather;
+                        
+                        var fut = "日期温度天气风向";
+                        
+                        $('#mufeng').html("<p class='text-center'>" + '当前：' + rt.weather.temperature + ' ℃ ，' + rt.wind.direct + rt.wind.power + ' ，' + '空气湿度' + rt.weather.humidity + '更新时间' + rt.time + "</p><p class='text-center'>" + rt.city_name + ' 今天是：' + weather[0].date + ' 星期' + weather[0].week + "</p><p class='text-center'>" + ' 白天：' + weather[0].info.day[0] + ' ~ ' + weather[0].info.day[2] + ' ℃ ，' + weather[0].info.day[1] + ' ，' + weather[0].info.day[3] + "</p><p class='text-center' style='padding-bottom: 10px;'>" + " 夜晚：" + weather[0].info.night[0] + ' ~ ' + weather[0].info.night[2] + ' ℃ ，' + weather[0].info.night[1] + ' ，' + weather[0].info.night[3] + "</p>");
+
+                        $('#future').html("<div class='col-sm-6 col-md-4'><p class='text-center'>" + '日期：' + weather[1].date + ' 星期' + weather[1].week + "</p><p class='text-center'>" + ' 白天：' + weather[1].info.day[0] + ' ~ ' + weather[1].info.day[2] + ' ℃ ，'+ weather[1].info.day[1] + ' ，' + weather[1].info.day[3] + "</p><p class='text-center'>" + " 夜晚：" + weather[1].info.night[0] + ' ~ ' + weather[1].info.night[2] + ' ℃ ，' + weather[1].info.night[1] + ' ，' + weather[1].info.night[3] + "</p></div><div class='col-sm-6 col-md-4'><p class='text-center'>" + '日期：' + weather[2].date + ' 星期' + weather[2].week + "</p><p class='text-center'>" + ' 白天：' + weather[2].info.day[0] + ' ~ ' + weather[2].info.day[2] + ' ℃ ，'+ weather[2].info.day[1] + ' ，' + weather[2].info.day[3] + "</p><p class='text-center'>" + " 夜晚：" + weather[2].info.night[0] + ' ~ ' + weather[2].info.night[2] + ' ℃ ，' + weather[2].info.night[1] + ' ，' + weather[2].info.night[3] + "</p></div><div class='col-sm-6 col-md-4'><p class='text-center'>" + '日期：' + weather[3].date + ' 星期' + weather[3].week + "</p><p class='text-center'>" + ' 白天：' + weather[3].info.day[0] + ' ~ ' + weather[3].info.day[2] + ' ℃ ，'+ weather[3].info.day[1] + ' ，' + weather[3].info.day[3] + "</p><p class='text-center'>" + " 夜晚：" + weather[3].info.night[0] + ' ~ ' + weather[3].info.night[2] + ' ℃ ，' + weather[3].info.night[1] + ' ，' + weather[3].info.night[3] + "</p></div>");
+
+                    }
+                });
+                $('#pic').css('display','none');
+            });
+            function urlencode (str) {  
+                str = (str + '').toString();   
+
+                return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');  
+            } 
+        })
+    </script>
+</head>
+<body>
+    <h2 class="text-center">天气查询</h2>
+    <div class="clearfix">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="input-group">
+                <input id="city" type="text" value="" placeholder="请输入城市名" class="form-control">
+                <span class="input-group-btn">
+                    <button id="search" class="btn btn-primary" type="button">查询</button>
+                </span>
+            </div>
+        </div>    
+        <div id="mufeng" class="col-md-4 col-md-offset-4"></div>
+        <div id="future" class="col-lg-12"></div>
+        <div id="pic">
+            <img src="weather.gif" class="img-responsive">
+        </div>
+    </div>    
+</body>
+</html>
